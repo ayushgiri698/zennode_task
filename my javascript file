@@ -1,0 +1,58 @@
+Running the JavaScript Program
+Saving the Code: Just like with the Python script, save the JavaScript code to a file named shopping_cart.js.
+
+Setting Up Node.js: To run this JavaScript file, you'll need Node.js. If it's not already on your computer, download it from nodejs.org.
+
+Executing the Script:
+
+Again, open your terminal or command prompt.
+Navigate to the directory where shopping_cart.js is saved.
+Type node shopping_cart.js and press Enter.
+The output will be displayed in your terminal.
+
+
+class ShoppingCart {
+    constructor() {
+        this.products = {
+            "Product A": { price: 20, quantity: 0, giftWrap: false },
+            "Product B": { price: 40, quantity: 0, giftWrap: false },
+            "Product C": { price: 50, quantity: 0, giftWrap: false }
+        };
+        this.totalQuantity = 0;
+        this.subtotal = 0;
+        this.shippingFee = 0;
+        this.giftWrapFee = 0;
+        this.discount = { name: "", amount: 0 };
+    }
+
+    addProduct(name, quantity, giftWrap) {
+        if (this.products[name]) {
+            this.products[name].quantity = quantity;
+            this.products[name].giftWrap = giftWrap;
+            this.totalQuantity += quantity;
+            this.subtotal += quantity * this.products[name].price;
+            if (giftWrap) {
+                this.giftWrapFee += quantity;
+            }
+            this.calculateShipping();
+        }
+    }
+
+    calculateShipping() {
+        let packages = 0;
+        for (let p in this.products) {
+            packages += Math.ceil(this.products[p].quantity / 10);
+        }
+        this.shippingFee = packages * 5;
+    }
+
+    calculateDiscounts() {
+        let discounts = [];
+
+        if (this.subtotal > 200) {
+            discounts.push({ name: "flat_10_discount", amount: 10 });
+        }
+
+        for (let p in this.products) {
+            if (this.products[p].quantity > 10) {
+                let discountAmount = this.products[p].quantity * this.products[p].price
