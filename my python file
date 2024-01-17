@@ -1,0 +1,78 @@
+Running the Python Program
+Saving the Code: First, save the Python script I've provided to a file on your computer. Name this file shopping_cart.py.
+
+Setting Up Python: Make sure you have Python installed. If you don't, download and install it from python.org. My script works with Python 3.x versions.
+
+Executing the Script:
+
+Open your command prompt or terminal.
+Change the directory to where you've saved shopping_cart.py. You can do this using the cd command followed by the path to the file.
+Run the script by typing python shopping_cart.py and hit Enter.
+You'll see the output right there in the terminal.
+
+class ShoppingCart:
+    def __init__(self):
+        self.products = {
+            "Product A": {"price": 20, "quantity": 0, "gift_wrap": False},
+            "Product B": {"price": 40, "quantity": 0, "gift_wrap": False},
+            "Product C": {"price": 50, "quantity": 0, "gift_wrap": False}
+        }
+        self.total_quantity = 0
+        self.subtotal = 0
+        self.shipping_fee = 0
+        self.gift_wrap_fee = 0
+        self.discount = {"name": "", "amount": 0}
+
+    def add_product(self, name, quantity, gift_wrap):
+        if name in self.products:
+            self.products[name]["quantity"] = quantity
+            self.products[name]["gift_wrap"] = gift_wrap
+            self.total_quantity += quantity
+            self.subtotal += quantity * self.products[name]["price"]
+            if gift_wrap:
+                self.gift_wrap_fee += quantity
+            self.calculate_shipping()
+
+    def calculate_shipping(self):
+        packages = sum([p["quantity"] // 10 + (1 if p["quantity"] % 10 > 0 else 0) for p in self.products.values()])
+        self.shipping_fee = packages * 5
+
+    def calculate_discounts(self):
+        discounts = []
+
+        if self.subtotal > 200:
+            discounts.append({"name": "flat_10_discount", "amount": 10})
+
+        for p in self.products.values():
+            if p["quantity"] > 10:
+                discounts.append({"name": "bulk_5_discount", "amount": p["quantity"] * p["price"] * 0.05})
+
+        if self.total_quantity > 20:
+            discounts.append({"name": "bulk_10_discount", "amount": self.subtotal * 0.1})
+
+        for product, details in self.products.items():
+            if self.total_quantity > 30 and details["quantity"] > 15:
+                discount_amount = (details["quantity"] - 15) * details["price"] * 0.5
+                discounts.append({"name": "tiered_50_discount", "amount": discount_amount})
+
+        if discounts:
+            self.discount = max(discounts, key=lambda x: x["amount"])
+
+    def checkout(self):
+        self.calculate_discounts()
+        total = self.subtotal - self.discount["amount"] + self.shipping_fee + self.gift_wrap_fee
+        return {
+            "Products": self.products,
+            "Subtotal": self.subtotal,
+            "Discount": self.discount,
+            "Shipping Fee": self.shipping_fee,
+            "Gift Wrap Fee": self.gift_wrap_fee,
+            "Total": total
+        }
+
+cart = ShoppingCart()
+cart.add_product("Product A", 12, True)
+cart.add_product("Product B", 5, False)
+cart.add_product("Product C", 20, True)
+checkout_details = cart.checkout()
+print(checkout_details)
